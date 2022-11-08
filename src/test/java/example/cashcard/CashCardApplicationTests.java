@@ -18,12 +18,12 @@ class CashCardApplicationTests {
 
     @Test
     void shouldReturnACashCardWhenDataIsSaved() {
-        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/AN_ID", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/99", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         DocumentContext documentContext = JsonPath.parse(response.getBody());
-        String id = documentContext.read("$.id");
-        assertThat(id).isEqualTo("AN_ID");
+        Number id = documentContext.read("$.id");
+        assertThat(id).isEqualTo(99);
 
         Double amount = documentContext.read("$.amount");
         assertThat(amount).isEqualTo(123.45);
@@ -31,7 +31,7 @@ class CashCardApplicationTests {
 
     @Test
     void shouldNotReturnACashCardWithAnUnknownId() {
-        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/NOT-THE-RIGHT-ID", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/1000", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isBlank();
