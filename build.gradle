@@ -14,10 +14,13 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.springframework.data:spring-data-jdbc'
     testImplementation 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
@@ -35,6 +38,6 @@ test {
         showStackTraces true
 
         // Change to `true` for more verbose test output
-        showStandardStreams = false
+        showStandardStreams = true
     }
 }
