@@ -4,6 +4,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
+ext['spring-security.version'] = '5.8.0'
+
 group = 'example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
