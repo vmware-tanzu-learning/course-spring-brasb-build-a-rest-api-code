@@ -1,21 +1,27 @@
 package example.cashcard;
 
+import java.net.HttpCookie;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import org.junit.jupiter.api.BeforeEach;
 import net.minidev.json.JSONArray;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.net.URI;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.annotation.DirtiesContext.*;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -54,10 +60,13 @@ class CashCardApplicationTests {
 
     @Test
     @DirtiesContext
-    void shouldCreateANewCashCard() {
+    void shouldCreateANewCashCard() throws URISyntaxException {
+        HttpHeaders headers = createClientCsrfHeaders();
         CashCard newCashCard = new CashCard(null, 250.00, "sarah1");
+        var req = new RequestEntity<>(newCashCard, headers, HttpMethod.POST, new URI("/cashcards"));
+
         ResponseEntity<Void> createResponse = restTemplate.withBasicAuth("sarah1", "abc123")
-                .postForEntity("/cashcards", newCashCard, Void.class);
+                .postForEntity("/cashcards", req, Void.class);
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
@@ -71,6 +80,39 @@ class CashCardApplicationTests {
 
         assertThat(id).isNotNull();
         assertThat(amount).isEqualTo(250.00);
+    }
+
+    /**
+     * Create the most basic CSRF headers (Cookie + X-XSRF-TOKEN) that spring-security would accept. An SPA
+     * _can_ do this.
+     */
+    private HttpHeaders createClientCsrfHeaders() {
+        var cookie = new HttpCookie("XSRF-TOKEN", "some-value");
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, cookie.toString());
+        headers.add("X-XSRF-TOKEN", cookie.getValue());
+        return headers;
+    }
+
+    /**
+     * This method creates the CSRF headers like angular would, by reading the cookie and then sending the
+     * value back in both the cookie and the header.
+     */
+    private HttpHeaders createRealCsrfHeader() {
+        ResponseEntity<Void> response = restTemplate.withBasicAuth("sarah1", "abc123")
+                .exchange("/cashcards", HttpMethod.HEAD, null, Void.class);
+        var cookie = HttpCookie.parse(
+                        response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)
+                )
+                .stream()
+                .filter(c -> c.getName().equals("XSRF-TOKEN"))
+                .findFirst()
+                .get();
+
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, cookie.toString());
+        headers.add("X-XSRF-TOKEN", cookie.getValue());
+        return headers;
     }
 
     @Test
