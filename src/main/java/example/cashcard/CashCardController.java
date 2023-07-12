@@ -36,7 +36,7 @@ public class CashCardController {
         CashCard savedCashCard = cashCardRepository.save(newCashCardRequest);
         URI locationOfNewCashCard = ucb
                 .path("cashcards/{id}")
-                .buildAndExpand(savedCashCard.id())
+                .buildAndExpand(savedCashCard.getId())
                 .toUri();
         return ResponseEntity.created(locationOfNewCashCard).build();
     }
@@ -56,7 +56,7 @@ public class CashCardController {
     private ResponseEntity<Void> putCashCard(@PathVariable Long requestedId, @RequestBody CashCard cashCardUpdate, Principal principal) {
         CashCard cashCard = findCashCard(requestedId, principal);
         if (cashCard != null) {
-            CashCard updatedCashCard = new CashCard(requestedId, cashCardUpdate.amount(), principal.getName());
+            CashCard updatedCashCard = new CashCard(requestedId, cashCardUpdate.getAmount(), principal.getName());
             cashCardRepository.save(updatedCashCard);
             return ResponseEntity.noContent().build();
         }
