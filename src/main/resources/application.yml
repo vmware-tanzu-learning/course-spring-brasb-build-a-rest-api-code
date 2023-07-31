@@ -1,8 +1,13 @@
 logging.level:
+  org.springframework.context: DEBUG
   org.springframework.data: DEBUG
   org.springframework.jdbc: DEBUG
+  example: DEBUG
 
 spring:
+
+  mvc:
+    locale: en_US
 
   h2:
     console:
