@@ -1,0 +1,27 @@
+logging.level:
+  org.springframework.context: WARN
+  org.springframework.data: WARN
+  org.springframework.jdbc: WARN
+  example: DEBUG
+
+spring:
+
+  mvc:
+    # Lesson 5.1 - deprecated in Spring Boot 2.5, removed in 2.7
+    locale: en_US
+#  web:
+#    locale: en_US
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    defer-datasource-initialization: true
+
+#    hibernate:
+#      ddl-auto: none
+
+#  sql:
+#    init:
+#      mode: always
