@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 class SecurityConfig {
 
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/cashcards/**")
@@ -28,12 +28,12 @@ class SecurityConfig {
     }
 
     @Bean
-    protected PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    protected UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
+    UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
         User.UserBuilder users = User.builder();
         UserDetails sarah = users
                 .username("sarah1")
