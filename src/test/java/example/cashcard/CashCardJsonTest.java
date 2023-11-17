@@ -26,9 +26,9 @@ class CashCardJsonTest {
     @BeforeEach
     void setUp() {
         cashCards = Arrays.array(
-                new CashCard(99L, 123.45, "sarah1"),
-                new CashCard(100L, 1.00, "sarah1"),
-                new CashCard(101L, 150.00, "sarah1"));
+                new CashCard(99, 123.45, "sarah1"),
+                new CashCard(100, 1.00, "sarah1"),
+                new CashCard(101, 150.00, "sarah1"));
     }
 
     @Test
@@ -53,7 +53,7 @@ class CashCardJsonTest {
                 }
                 """;
         assertThat(json.parse(expected))
-                .isEqualTo(new CashCard(99L, 123.45, "sarah1"));
+                .isEqualTo(new CashCard(99, 123.45, "sarah1"));
         assertThat(json.parseObject(expected).id()).isEqualTo(99L);
         assertThat(json.parseObject(expected).amount()).isEqualTo(123.45);
     }
